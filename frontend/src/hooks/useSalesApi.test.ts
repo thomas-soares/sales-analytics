@@ -57,7 +57,7 @@ describe("useUpload Hook", () => {
     const file = new File(["data"], "test.csv", { type: "text/csv" });
 
     await act(async () => {
-      await result.current.upload(file);
+      await expect(result.current.upload(file)).rejects.toThrow("Invalid CSV");
     });
 
     expect(result.current.error).toBe("Invalid CSV");

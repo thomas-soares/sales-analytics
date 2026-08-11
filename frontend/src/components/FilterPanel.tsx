@@ -51,10 +51,14 @@ export function FilterPanel({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Start Date */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="start-date"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Start Date (YYYY-MM-DD)
           </label>
           <InputText
+            id="start-date"
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
@@ -65,10 +69,14 @@ export function FilterPanel({
 
         {/* End Date */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="end-date"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             End Date (YYYY-MM-DD)
           </label>
           <InputText
+            id="end-date"
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
@@ -79,10 +87,14 @@ export function FilterPanel({
 
         {/* Category */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="category"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Category
           </label>
           <Dropdown
+            inputId="category"
             value={category}
             onChange={(e) => setCategory(e.value)}
             options={categories}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "primeicons/primeicons.css";
 
 import type { ReportRequest, SalesReport } from "./types/api";
@@ -9,11 +9,14 @@ import {
   FilterPanel,
   ErrorNotification,
 } from "./components";
+import { downloadReport, loadStoredReport, saveStoredReport } from "./utils";
 import "./App.css";
 
 export function App(): React.ReactElement {
   const [showUploadDialog, setShowUploadDialog] = useState(false);
-  const [report, setReport] = useState<SalesReport | null>(null);
+  const [report, setReport] = useState<SalesReport | null>(() =>
+    loadStoredReport(),
+  );
 
   const {
     uploading,
@@ -30,9 +33,14 @@ export function App(): React.ReactElement {
     reset: resetReport,
   } = useReport();
 
-  const handleUploadSuccess = async (count: number) => {
-    resetUpload();
-    setReport(fetchedReport);
+  useEffect(() => {
+    if (fetchedReport) {
+      setReport(fetchedReport);
+      saveStoredReport(fetchedReport);
+    }
+  }, [fetchedReport]);
+
+  const handleUploadSuccess = async () => {
     await fetchReport({});
   };
 
@@ -41,7 +49,7 @@ export function App(): React.ReactElement {
   };
 
   const categories =
-    fetchedReport?.category_totals.map((c) => c.category) || [];
+    report?.category_totals.map((c) => c.category) || [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -66,9 +74,9 @@ export function App(): React.ReactElement {
               <h2 className="text-xl font-semibold text-gray-900">
                 Upload CSV
               </h2>
-              {recordsCount && (
+              {recordsCount !== null && (
                 <p className="text-sm text-green-600 mt-2">
-                  ✓ {recordsCount} records uploaded successfully
+                  {recordsCount} records uploaded successfully
                 </p>
               )}
             </div>
@@ -82,7 +90,7 @@ export function App(): React.ReactElement {
         </div>
 
         {/* Filter Section */}
-        {fetchedReport && (
+        {report && (
           <div className="mb-8">
             <FilterPanel
               categories={categories}
@@ -93,12 +101,17 @@ export function App(): React.ReactElement {
         )}
 
         {/* Report Section */}
-        {fetchedReport && (
-          <ReportTable report={fetchedReport} loading={loading} />
+        {report && (
+          <ReportTable
+            report={report}
+            loading={loading}
+            onExportCsv={() => downloadReport(report, "csv")}
+            onExportJson={() => downloadReport(report, "json")}
+          />
         )}
 
         {/* Empty State */}
-        {!fetchedReport && !loading && (
+        {!report && !loading && (
           <div className="bg-white rounded shadow p-12 text-center">
             <p className="text-gray-500 text-lg">
               Upload a CSV file to get started with your sales analysis
@@ -111,6 +124,7 @@ export function App(): React.ReactElement {
       <UploadDialog
         visible={showUploadDialog}
         onClose={() => setShowUploadDialog(false)}
+        onUpload={upload}
         onUploadSuccess={handleUploadSuccess}
         onUploadError={() => {}}
         loading={uploading}

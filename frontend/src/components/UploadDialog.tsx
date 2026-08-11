@@ -6,11 +6,11 @@ import React, { useRef, useState } from "react";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
-import { FileUpload } from "primereact/fileupload";
 
 interface UploadDialogProps {
   visible: boolean;
   onClose: () => void;
+  onUpload: (file: File) => Promise<number>;
   onUploadSuccess: (recordsCount: number) => void;
   onUploadError: (error: string) => void;
   loading: boolean;
@@ -19,6 +19,7 @@ interface UploadDialogProps {
 export function UploadDialog({
   visible,
   onClose,
+  onUpload,
   onUploadSuccess,
   onUploadError,
   loading,
@@ -41,26 +42,13 @@ export function UploadDialog({
     }
 
     try {
-      const formData = new FormData();
-      formData.append("file", selectedFile);
-
-      const response = await fetch("http://localhost:8000/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (data.status === "success") {
-        onUploadSuccess(data.records_count);
-        setSelectedFile(null);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = "";
-        }
-        onClose();
-      } else {
-        onUploadError(data.message || "Upload failed");
+      const recordsCount = await onUpload(selectedFile);
+      onUploadSuccess(recordsCount);
+      setSelectedFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
       }
+      onClose();
     } catch (error) {
       onUploadError(error instanceof Error ? error.message : "Upload failed");
     }
@@ -78,10 +66,14 @@ export function UploadDialog({
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="sales-csv-file"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Select CSV File
             </label>
             <input
+              id="sales-csv-file"
               ref={fileInputRef}
               type="file"
               accept=".csv"

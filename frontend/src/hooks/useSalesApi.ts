@@ -11,7 +11,7 @@ interface UseUploadResult {
   uploading: boolean;
   error: string | null;
   recordsCount: number | null;
-  upload: (file: File) => Promise<void>;
+  upload: (file: File) => Promise<number>;
   reset: () => void;
 }
 
@@ -20,7 +20,7 @@ export function useUpload(): UseUploadResult {
   const [error, setError] = useState<string | null>(null);
   const [recordsCount, setRecordsCount] = useState<number | null>(null);
 
-  const upload = async (file: File) => {
+  const upload = async (file: File): Promise<number> => {
     setUploading(true);
     setError(null);
 
@@ -31,9 +31,13 @@ export function useUpload(): UseUploadResult {
         throw new Error(response.message || "Upload failed");
       }
 
-      setRecordsCount(response.records_count || 0);
+      const count = response.records_count || 0;
+      setRecordsCount(count);
+      return count;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
+      const message = err instanceof Error ? err.message : "Unknown error";
+      setError(message);
+      throw new Error(message);
     } finally {
       setUploading(false);
     }

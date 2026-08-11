@@ -3,20 +3,25 @@
  */
 
 import React from "react";
+import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 
-import type { SalesReport } from "../types/api";
+import type { CategoryTotal, ProductTotal, SalesReport } from "../types/api";
 import { formatCurrency, formatQuantity } from "../utils/formatting";
 
 interface ReportTableProps {
   report: SalesReport | null;
   loading?: boolean;
+  onExportCsv?: () => void;
+  onExportJson?: () => void;
 }
 
 export function ReportTable({
   report,
   loading = false,
+  onExportCsv,
+  onExportJson,
 }: ReportTableProps): React.ReactElement {
   if (!report) {
     return (
@@ -59,7 +64,27 @@ export function ReportTable({
 
       {/* Products Table */}
       <div>
-        <h3 className="text-lg font-semibold mb-4">Products</h3>
+        <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
+          <h3 className="text-lg font-semibold">Products</h3>
+          <div className="flex gap-2 justify-end">
+            <Button
+              label="CSV"
+              icon="pi pi-download"
+              onClick={onExportCsv}
+              disabled={loading || !onExportCsv}
+              className="p-button-sm p-button-secondary"
+              aria-label="Export report as CSV"
+            />
+            <Button
+              label="JSON"
+              icon="pi pi-download"
+              onClick={onExportJson}
+              disabled={loading || !onExportJson}
+              className="p-button-sm p-button-secondary"
+              aria-label="Export report as JSON"
+            />
+          </div>
+        </div>
         <DataTable
           value={report.product_totals}
           loading={loading}
@@ -69,13 +94,13 @@ export function ReportTable({
           <Column
             field="total_quantity"
             header="Quantity"
-            body={(row) => formatQuantity(row.total_quantity)}
+            body={(row: ProductTotal) => formatQuantity(row.total_quantity)}
             sortable
           />
           <Column
             field="total_value"
             header="Total Value"
-            body={(row) => formatCurrency(row.total_value)}
+            body={(row: ProductTotal) => formatCurrency(row.total_value)}
             sortable
           />
         </DataTable>
@@ -93,7 +118,7 @@ export function ReportTable({
           <Column
             field="total_value"
             header="Total Value"
-            body={(row) => formatCurrency(row.total_value)}
+            body={(row: CategoryTotal) => formatCurrency(row.total_value)}
             sortable
           />
         </DataTable>

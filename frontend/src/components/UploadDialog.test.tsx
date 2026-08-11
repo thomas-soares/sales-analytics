@@ -3,12 +3,13 @@
  */
 
 import { describe, expect, it, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 
 import { UploadDialog } from "./UploadDialog";
 
 describe("UploadDialog", () => {
   const mockOnClose = vi.fn();
+  const mockOnUpload = vi.fn();
   const mockOnUploadSuccess = vi.fn();
   const mockOnUploadError = vi.fn();
 
@@ -17,13 +18,14 @@ describe("UploadDialog", () => {
       <UploadDialog
         visible={true}
         onClose={mockOnClose}
+        onUpload={mockOnUpload}
         onUploadSuccess={mockOnUploadSuccess}
         onUploadError={mockOnUploadError}
         loading={false}
       />,
     );
 
-    expect(screen.getByText(/Upload Sales CSV/i)).toBeInTheDocument();
+    expect(screen.getByText(/Upload Sales CSV/i)).toBeTruthy();
   });
 
   it("should not render dialog when not visible", () => {
@@ -31,6 +33,7 @@ describe("UploadDialog", () => {
       <UploadDialog
         visible={false}
         onClose={mockOnClose}
+        onUpload={mockOnUpload}
         onUploadSuccess={mockOnUploadSuccess}
         onUploadError={mockOnUploadError}
         loading={false}
@@ -46,14 +49,17 @@ describe("UploadDialog", () => {
       <UploadDialog
         visible={true}
         onClose={mockOnClose}
+        onUpload={mockOnUpload}
         onUploadSuccess={mockOnUploadSuccess}
         onUploadError={mockOnUploadError}
         loading={false}
       />,
     );
 
-    const uploadButton = screen.getByText(/Upload/i) as HTMLButtonElement;
-    expect(uploadButton).toBeDisabled();
+    const uploadButton = screen.getByRole("button", {
+      name: "Upload",
+    }) as HTMLButtonElement;
+    expect(uploadButton.disabled).toBe(true);
   });
 
   it("should disable buttons when loading", () => {
@@ -61,13 +67,42 @@ describe("UploadDialog", () => {
       <UploadDialog
         visible={true}
         onClose={mockOnClose}
+        onUpload={mockOnUpload}
         onUploadSuccess={mockOnUploadSuccess}
         onUploadError={mockOnUploadError}
         loading={true}
       />,
     );
 
-    const cancelButton = screen.getByText(/Cancel/i) as HTMLButtonElement;
-    expect(cancelButton).toBeDisabled();
+    const cancelButton = screen.getByRole("button", {
+      name: "Cancel",
+    }) as HTMLButtonElement;
+    expect(cancelButton.disabled).toBe(true);
+  });
+
+  it("should upload selected file through callback", async () => {
+    mockOnUpload.mockResolvedValueOnce(7);
+
+    render(
+      <UploadDialog
+        visible={true}
+        onClose={mockOnClose}
+        onUpload={mockOnUpload}
+        onUploadSuccess={mockOnUploadSuccess}
+        onUploadError={mockOnUploadError}
+        loading={false}
+      />,
+    );
+
+    const file = new File(["date,product"], "sales.csv", { type: "text/csv" });
+    const input = screen.getByLabelText(/Select CSV File/i);
+    fireEvent.change(input, { target: { files: [file] } });
+    fireEvent.click(screen.getByRole("button", { name: "Upload" }));
+
+    await waitFor(() => {
+      expect(mockOnUpload).toHaveBeenCalledWith(file);
+      expect(mockOnUploadSuccess).toHaveBeenCalledWith(7);
+      expect(mockOnClose).toHaveBeenCalled();
+    });
   });
 });

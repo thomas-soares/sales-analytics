@@ -15,7 +15,9 @@ export function formatCurrency(value: string | number): string {
     currency: "BRL",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(num);
+  })
+    .format(num)
+    .replace(/\u00a0/g, " ");
 }
 
 /**
@@ -24,8 +26,8 @@ export function formatCurrency(value: string | number): string {
  * @returns Formatted date string
  */
 export function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("pt-BR").format(date);
+  const [year, month, day] = dateString.split("-");
+  return `${day}/${month}/${year}`;
 }
 
 /**

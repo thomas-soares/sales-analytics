@@ -20,14 +20,14 @@ describe("FilterPanel", () => {
       />,
     );
 
-    expect(screen.getByText(/Filters/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Start Date/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/End Date/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Category/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Filters" })).toBeTruthy();
+    expect(screen.getByLabelText(/Start Date/i)).toBeTruthy();
+    expect(screen.getByLabelText(/End Date/i)).toBeTruthy();
+    expect(screen.getAllByLabelText(/Category/i).length).toBeGreaterThan(0);
   });
 
   it("should call onApplyFilters with filter values", () => {
-    const { container } = render(
+    render(
       <FilterPanel
         categories={categories}
         onApplyFilters={mockOnApplyFilters}
@@ -38,7 +38,7 @@ describe("FilterPanel", () => {
     const startDateInput = screen.getByLabelText(
       /Start Date/i,
     ) as HTMLInputElement;
-    const applyButton = screen.getByText(/Apply Filters/i);
+    const applyButton = screen.getByRole("button", { name: "Apply Filters" });
 
     fireEvent.change(startDateInput, { target: { value: "2024-01-10" } });
     fireEvent.click(applyButton);
@@ -57,7 +57,7 @@ describe("FilterPanel", () => {
       />,
     );
 
-    const resetButton = screen.getByText(/Reset/i);
+    const resetButton = screen.getByRole("button", { name: "Reset" });
     fireEvent.click(resetButton);
 
     expect(mockOnApplyFilters).toHaveBeenCalledWith({});
@@ -72,8 +72,10 @@ describe("FilterPanel", () => {
       />,
     );
 
-    const applyButton = screen.getByText(/Apply Filters/i) as HTMLButtonElement;
-    expect(applyButton).toBeDisabled();
+    const applyButton = screen.getByRole("button", {
+      name: "Apply Filters",
+    }) as HTMLButtonElement;
+    expect(applyButton.disabled).toBe(true);
   });
 
   it("should apply all filters together", () => {
@@ -89,7 +91,7 @@ describe("FilterPanel", () => {
       /Start Date/i,
     ) as HTMLInputElement;
     const endDateInput = screen.getByLabelText(/End Date/i) as HTMLInputElement;
-    const applyButton = screen.getByText(/Apply Filters/i);
+    const applyButton = screen.getByRole("button", { name: "Apply Filters" });
 
     fireEvent.change(startDateInput, { target: { value: "2024-01-01" } });
     fireEvent.change(endDateInput, { target: { value: "2024-01-31" } });

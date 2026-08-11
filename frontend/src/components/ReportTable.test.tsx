@@ -26,20 +26,20 @@ describe("ReportTable", () => {
   it("should render report summary with total value", () => {
     render(<ReportTable report={mockReport} />);
 
-    expect(screen.getByText(/399\.40/)).toBeInTheDocument();
-    expect(screen.getByText("T-Shirt")).toBeInTheDocument();
+    expect(screen.getAllByText("R$ 399,40").length).toBeGreaterThan(1);
+    expect(screen.getAllByText("T-Shirt").length).toBeGreaterThan(0);
   });
 
   it("should render product totals table with correct data", () => {
     render(<ReportTable report={mockReport} />);
 
-    expect(screen.getByText("T-Shirt")).toBeInTheDocument();
-    expect(screen.getByText("4")).toBeInTheDocument();
+    expect(screen.getAllByText("T-Shirt").length).toBeGreaterThan(1);
+    expect(screen.getAllByText("4").length).toBeGreaterThan(0);
   });
 
   it("should render category totals", () => {
     render(<ReportTable report={mockReport} />);
 
-    expect(screen.getByText("Clothing")).toBeInTheDocument();
+    expect(screen.getByText("Clothing")).toBeTruthy();
   });
 });
