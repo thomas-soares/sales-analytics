@@ -10,13 +10,19 @@ import {
   FilterPanel,
   ErrorNotification,
 } from "./components";
-import { downloadReport, loadStoredReport, saveStoredReport } from "./utils";
+import {
+  clearStoredReport,
+  downloadReport,
+  loadStoredReport,
+  saveStoredReport,
+} from "./utils";
 import "./App.css";
 
 export function App(): React.ReactElement {
   const [showUploadDialog, setShowUploadDialog] = useState(false);
-  const [report, setReport] = useState<SalesReport | null>(() =>
-    loadStoredReport(),
+  const [report, setReport] = useState<SalesReport | null>(null);
+  const [hasStoredReport, setHasStoredReport] = useState(
+    () => loadStoredReport() !== null,
   );
 
   const {
@@ -38,6 +44,7 @@ export function App(): React.ReactElement {
     if (fetchedReport) {
       setReport(fetchedReport);
       saveStoredReport(fetchedReport);
+      setHasStoredReport(true);
     }
   }, [fetchedReport]);
 
@@ -47,6 +54,21 @@ export function App(): React.ReactElement {
 
   const handleApplyFilters = async (filters: ReportRequest) => {
     await fetchReport(filters);
+  };
+
+  const handleRestoreReport = () => {
+    const storedReport = loadStoredReport();
+
+    if (storedReport) {
+      setReport(storedReport);
+      setHasStoredReport(true);
+    }
+  };
+
+  const handleClearStoredReport = () => {
+    clearStoredReport();
+    setHasStoredReport(false);
+    setReport(null);
   };
 
   const categories = report?.category_totals.map((c) => c.category) || [];
@@ -101,6 +123,23 @@ export function App(): React.ReactElement {
         {!report && !loading && (
           <Card className="empty-state">
             <p>Upload a CSV file to get started with your sales analysis</p>
+            {hasStoredReport && (
+              <div className="actions empty-state__actions">
+                <Button
+                  label="Restore Last Report"
+                  icon="pi pi-history"
+                  onClick={handleRestoreReport}
+                  severity="secondary"
+                />
+                <Button
+                  label="Clear Saved Report"
+                  icon="pi pi-trash"
+                  onClick={handleClearStoredReport}
+                  severity="danger"
+                  outlined
+                />
+              </div>
+            )}
           </Card>
         )}
       </main>
