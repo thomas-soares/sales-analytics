@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - "badges/**"
   pull_request:
     branches:
       - main
@@ -140,19 +142,10 @@ jobs:
           --frontend coverage-artifacts/frontend/coverage-summary.json
           --out badges
 
-      - name: Publish badge data
+      - name: Publish coverage badges
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git fetch origin badges || true
-          if git rev-parse --verify origin/badges; then
-            git switch --track -c badges origin/badges
-          else
-            git switch --orphan badges
-          fi
-          find . -mindepth 1 -maxdepth 1 ! -name .git ! -name badges -exec rm -rf {} +
-          cp badges/*.json .
-          rm -rf badges
-          git add backend-coverage.json frontend-coverage.json
-          git commit -m "chore: update coverage badges" || exit 0
-          git push origin badges
+          git add badges/backend-coverage.svg badges/frontend-coverage.svg
+          git commit -m "chore: update coverage badges [skip ci]" || exit 0
+          git push origin HEAD:main

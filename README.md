@@ -1,8 +1,8 @@
 # Sales Analytics Platform
 
 [![CI](https://github.com/thomas-soares/sales-analytics/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/thomas-soares/sales-analytics/actions/workflows/ci.yml)
-[![Backend Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/thomas-soares/sales-analytics/badges/backend-coverage.json)](https://github.com/thomas-soares/sales-analytics/actions/workflows/ci.yml)
-[![Frontend Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/thomas-soares/sales-analytics/badges/frontend-coverage.json)](https://github.com/thomas-soares/sales-analytics/actions/workflows/ci.yml)
+[![Backend Coverage](badges/backend-coverage.svg)](https://github.com/thomas-soares/sales-analytics/actions/workflows/ci.yml)
+[![Frontend Coverage](badges/frontend-coverage.svg)](https://github.com/thomas-soares/sales-analytics/actions/workflows/ci.yml)
 
 Full stack sales analytics platform built with a FastAPI backend and a React 18 frontend. The app accepts a CSV upload, parses and validates sales rows, aggregates product/category totals, supports report filters, persists the latest report in the browser, and exports reports as CSV or JSON.
 
