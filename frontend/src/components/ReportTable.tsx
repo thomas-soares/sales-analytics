@@ -52,80 +52,78 @@ export function ReportTable({
         </Card>
       </div>
 
-      <Panel
-        header={
-          <Toolbar
-            className="table-toolbar"
-            start={<h3>Products</h3>}
-            end={
-              <div className="actions">
-                <Button
-                  label="CSV"
-                  icon="pi pi-download"
-                  onClick={onExportCsv}
-                  disabled={loading || !onExportCsv}
-                  severity="secondary"
-                  size="small"
-                  aria-label="Export report as CSV"
-                />
-                <Button
-                  label="JSON"
-                  icon="pi pi-download"
-                  onClick={onExportJson}
-                  disabled={loading || !onExportJson}
-                  severity="secondary"
-                  size="small"
-                  aria-label="Export report as JSON"
-                />
-              </div>
-            }
-          />
-        }
-        className="table-section"
-      >
-        <DataTable
-          value={report.product_totals}
-          loading={loading}
-          responsiveLayout="scroll"
-        >
-          <Column field="product" header="Product" sortable />
-          <Column
-            field="total_quantity"
-            header="Quantity"
-            body={(row: ProductTotal) => formatQuantity(row.total_quantity)}
-            sortable
-          />
-          <Column
-            field="total_value"
-            header="Total Value"
-            body={(row: ProductTotal) => formatCurrency(row.total_value)}
-            sortable
-          />
-        </DataTable>
+      <Panel className="table-section">
+        <Toolbar
+          className="table-toolbar"
+          start={<h3>Products</h3>}
+          end={
+            <div className="actions">
+              <Button
+                label="CSV"
+                icon="pi pi-download"
+                onClick={onExportCsv}
+                disabled={loading || !onExportCsv}
+                severity="secondary"
+                size="small"
+                aria-label="Export report as CSV"
+              />
+              <Button
+                label="JSON"
+                icon="pi pi-download"
+                onClick={onExportJson}
+                disabled={loading || !onExportJson}
+                severity="secondary"
+                size="small"
+                aria-label="Export report as JSON"
+              />
+            </div>
+          }
+        />
+
+        <div className="table-content">
+          <DataTable
+            value={report.product_totals}
+            loading={loading}
+            responsiveLayout="scroll"
+          >
+            <Column field="product" header="Product" sortable />
+            <Column
+              field="total_quantity"
+              header="Quantity"
+              body={(row: ProductTotal) => formatQuantity(row.total_quantity)}
+              sortable
+            />
+            <Column
+              field="total_value"
+              header="Total Value"
+              body={(row: ProductTotal) => formatCurrency(row.total_value)}
+              sortable
+            />
+          </DataTable>
+        </div>
       </Panel>
 
-      <Panel
-        header={
-          <Toolbar
-            className="table-toolbar table-toolbar--plain"
-            start={<h3>Categories</h3>}
-          />
-        }
-        className="table-section"
-      >
-        <DataTable
-          value={report.category_totals}
-          loading={loading}
-          responsiveLayout="scroll"
-        >
-          <Column field="category" header="Category" sortable />
-          <Column
-            field="total_value"
-            header="Total Value"
-            body={(row: CategoryTotal) => formatCurrency(row.total_value)}
-            sortable
-          />
-        </DataTable>
+      <Panel className="table-section">
+        <Toolbar
+          className="table-toolbar table-toolbar--plain"
+          start={<h3>Categories</h3>}
+        />
+
+        <div className="table-content">
+          <DataTable
+            value={report.category_totals}
+            loading={loading}
+            responsiveLayout="scroll"
+          >
+            <Column field="category" header="Category" sortable />
+            <Column
+              field="total_value"
+              header="Total Value"
+              body={(row: CategoryTotal) => formatCurrency(row.total_value)}
+              sortable
+            />
+          </DataTable>
+        </div>
       </Panel>
     </div>
   );

@@ -186,11 +186,11 @@
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
 }
 
-.table-section .p-panel-header {
+.table-section .p-panel-content {
   padding: 0;
 }
 
-.table-section .p-panel-content {
+.table-content {
   padding: 0 20px 20px;
 }
 
@@ -266,7 +266,7 @@
     padding: 14px 16px;
   }
 
-  .table-section .p-panel-content {
+  .table-content {
     padding: 0 16px 16px;
   }
 
