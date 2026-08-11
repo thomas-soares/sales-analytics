@@ -36,7 +36,7 @@ def _parse_price(value: str) -> Decimal:
     """Parse and validate a price value as Decimal."""
     try:
         return Decimal(value)
-    except Exception as exc:  # pragma: no cover - defensive branch
+    except Exception as exc:
         raise ValueError("Invalid unit_price") from exc
 
 
