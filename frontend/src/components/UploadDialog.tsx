@@ -4,6 +4,8 @@ import { Button } from "primereact/button";
 import { FileUpload, type FileUploadHandlerEvent } from "primereact/fileupload";
 import { Toast } from "primereact/toast";
 
+import { validateSalesCsvFile } from "../utils/csvValidation";
+
 interface UploadDialogProps {
   visible: boolean;
   onClose: () => void;
@@ -41,6 +43,7 @@ export function UploadDialog({
     setSelectedFile(file);
 
     try {
+      await validateSalesCsvFile(file);
       const recordsCount = await onUpload(file);
       onUploadSuccess(recordsCount);
       setSelectedFile(null);
@@ -58,6 +61,7 @@ export function UploadDialog({
     }
 
     try {
+      await validateSalesCsvFile(selectedFile);
       const recordsCount = await onUpload(selectedFile);
       onUploadSuccess(recordsCount);
       setSelectedFile(null);

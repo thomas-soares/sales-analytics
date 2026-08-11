@@ -94,7 +94,11 @@ describe("UploadDialog", () => {
       />,
     );
 
-    const file = new File(["date,product"], "sales.csv", { type: "text/csv" });
+    const file = new File(
+      ["product,category,quantity,unit_price,date\nT-Shirt,Clothing,1,49.90,2024-01-10"],
+      "sales.csv",
+      { type: "text/csv" },
+    );
     const input = screen.getByLabelText(/Select CSV File/i);
     fireEvent.change(input, { target: { files: [file] } });
     fireEvent.click(await screen.findByRole("button", { name: "Upload" }));

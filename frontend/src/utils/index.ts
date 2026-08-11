@@ -14,3 +14,4 @@ export {
   loadStoredReport,
   saveStoredReport,
 } from "./reportStorage";
+export { validateSalesCsvFile } from "./csvValidation";
