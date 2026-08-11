@@ -2,7 +2,7 @@
  * Tests for the UploadDialog component.
  */
 
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 
 import { UploadDialog } from "./UploadDialog";
@@ -12,6 +12,10 @@ describe("UploadDialog", () => {
   const mockOnUpload = vi.fn();
   const mockOnUploadSuccess = vi.fn();
   const mockOnUploadError = vi.fn();
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it("should render dialog when visible", () => {
     render(
@@ -107,6 +111,35 @@ describe("UploadDialog", () => {
       expect(mockOnUpload).toHaveBeenCalledWith(file);
       expect(mockOnUploadSuccess).toHaveBeenCalledWith(7);
       expect(mockOnClose).toHaveBeenCalled();
+    });
+  });
+
+  it("should reject invalid CSV before uploading", async () => {
+    render(
+      <UploadDialog
+        visible={true}
+        onClose={mockOnClose}
+        onUpload={mockOnUpload}
+        onUploadSuccess={mockOnUploadSuccess}
+        onUploadError={mockOnUploadError}
+        loading={false}
+      />,
+    );
+
+    const file = new File(["product,quantity\nT-Shirt,1"], "invalid.csv", {
+      type: "text/csv",
+    });
+    const input = screen.getByLabelText(/Select CSV File/i);
+    fireEvent.change(input, { target: { files: [file] } });
+    fireEvent.click(await screen.findByRole("button", { name: "Upload" }));
+
+    await waitFor(() => {
+      expect(mockOnUploadError).toHaveBeenCalledWith(
+        expect.stringContaining("Missing required CSV columns"),
+      );
+      expect(mockOnUpload).not.toHaveBeenCalled();
+      expect(mockOnUploadSuccess).not.toHaveBeenCalled();
+      expect(mockOnClose).not.toHaveBeenCalled();
     });
   });
 });
