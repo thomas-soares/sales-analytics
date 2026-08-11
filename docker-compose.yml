@@ -23,4 +23,4 @@ services:
     working_dir: /app
     environment:
       - CI=true
-    command: sh -c "pnpm install --no-frozen-lockfile && pnpm dev"
+    command: sh -c "pnpm install --no-frozen-lockfile && pnpm dev -- --host 0.0.0.0"
