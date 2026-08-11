@@ -71,6 +71,14 @@ docker compose up --build
 - Backend: `http://localhost:8000`
 - Frontend: `http://localhost:5173`
 
+The frontend service mounts the source directory at `/app` for live development and keeps `/app/node_modules` in a named Docker volume. This prevents Linux container dependencies from overwriting the local Windows `node_modules` directory while still allowing code changes to reload inside the container.
+
+Stop the containers:
+
+```bash
+docker compose down
+```
+
 Run frontend tests with coverage in the container:
 
 ```bash
@@ -90,6 +98,7 @@ Frontend:
 
 ```bash
 cd frontend
+pnpm install --frozen-lockfile
 pnpm exec vitest --run
 pnpm exec vitest --run --coverage
 pnpm build
