@@ -40,14 +40,12 @@
 }
 
 .upload-panel__content,
-.table-section__header,
 .actions {
   display: flex;
   align-items: center;
 }
 
-.upload-panel__content,
-.table-section__header {
+.upload-panel__content {
   justify-content: space-between;
   gap: 16px;
 }

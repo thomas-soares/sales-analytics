@@ -81,7 +81,7 @@ export function ReportTable({
             }
           />
         }
-        className="table-section table-section--products"
+        className="table-section"
       >
         <DataTable
           value={report.product_totals}
@@ -111,7 +111,7 @@ export function ReportTable({
             start={<h3>Categories</h3>}
           />
         }
-        className="table-section table-section--categories"
+        className="table-section"
       >
         <DataTable
           value={report.category_totals}
