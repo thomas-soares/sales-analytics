@@ -25,7 +25,19 @@ Full stack sales analytics platform built with a FastAPI backend and a React 18 
 
 ## CSV Format
 
-Upload a `.csv` file through the frontend `Upload CSV` area. The backend expects sales rows with the required columns used by the parser, including product, category, quantity, price, and date fields. Values are validated before aggregation.
+Upload a `.csv` file through the frontend `Upload CSV` area. The challenge statement shows a minimal CSV shape with product, quantity, and unit price fields. This implementation intentionally keeps an extended CSV contract so the required category totals and date/category filters can be computed from the uploaded data.
+
+Required columns:
+
+```csv
+product,category,quantity,unit_price,date
+Camiseta,Vestuario,3,49.90,2024-01-10
+Calca,Vestuario,2,99.90,2024-01-11
+Camiseta,Vestuario,1,49.90,2024-01-12
+Tenis,Calcados,1,199.90,2024-01-13
+```
+
+The frontend validates these headers with the browser `FileReader` API and simple `split` parsing before uploading. The backend remains responsible for the authoritative CSV parsing, validation, and aggregation using Python's standard `csv` module.
 
 ## API
 
@@ -36,7 +48,7 @@ Upload a `.csv` file through the frontend `Upload CSV` area. The backend expects
   - `end_date=YYYY-MM-DD`
   - `category=<category>`
 
-FastAPI Swagger/OpenAPI docs are available at `http://localhost:8000/docs` when the backend is running.
+FastAPI Swagger/OpenAPI docs are available at `http://localhost:8000/docs` when the backend is running, including example responses and query parameter examples.
 
 ## Local Development
 
@@ -108,6 +120,6 @@ Current frontend coverage validated in Docker: 95.27% statements and 95.27% line
 
 ## Additional Features
 
-- Browser persistence: the latest fetched report is saved to `localStorage` and restored on reload.
+- Browser persistence: the latest fetched report is saved to `localStorage`; the empty state offers explicit actions to restore or clear the saved report.
 - Export: reports can be downloaded as `sales-report.csv` or `sales-report.json`.
 - Docker Compose: backend and frontend services are defined in `docker-compose.yml`.
