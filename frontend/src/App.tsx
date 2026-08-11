@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import "primeicons/primeicons.css";
+import { Button } from "primereact/button";
+import { Card } from "primereact/card";
 
 import type { ReportRequest, SalesReport } from "./types/api";
 import { useReport, useUpload } from "./hooks/useSalesApi";
@@ -48,59 +49,46 @@ export function App(): React.ReactElement {
     await fetchReport(filters);
   };
 
-  const categories =
-    report?.category_totals.map((c) => c.category) || [];
+  const categories = report?.category_totals.map((c) => c.category) || [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Sales Analytics Platform
-          </h1>
-          <p className="text-gray-600 mt-2">
-            Upload and analyze your sales data
-          </p>
+    <div className="app-shell">
+      <header className="app-header">
+        <div className="app-container">
+          <h1>Sales Analytics Platform</h1>
+          <p>Upload and analyze your sales data</p>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        {/* Upload Section */}
-        <div className="bg-white rounded shadow p-6 mb-8">
-          <div className="flex items-center justify-between">
+      <main className="app-container app-main">
+        <Card className="upload-panel">
+          <div className="upload-panel__content">
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">
-                Upload CSV
-              </h2>
+              <h2>Upload CSV</h2>
               {recordsCount !== null && (
-                <p className="text-sm text-green-600 mt-2">
+                <p className="success-text">
                   {recordsCount} records uploaded successfully
                 </p>
               )}
             </div>
-            <button
+            <Button
+              label="Choose File"
+              icon="pi pi-upload"
               onClick={() => setShowUploadDialog(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium"
-            >
-              Choose File
-            </button>
+            />
           </div>
-        </div>
+        </Card>
 
-        {/* Filter Section */}
         {report && (
-          <div className="mb-8">
+          <section className="section-block">
             <FilterPanel
               categories={categories}
               onApplyFilters={handleApplyFilters}
               loading={loading}
             />
-          </div>
+          </section>
         )}
 
-        {/* Report Section */}
         {report && (
           <ReportTable
             report={report}
@@ -110,17 +98,13 @@ export function App(): React.ReactElement {
           />
         )}
 
-        {/* Empty State */}
         {!report && !loading && (
-          <div className="bg-white rounded shadow p-12 text-center">
-            <p className="text-gray-500 text-lg">
-              Upload a CSV file to get started with your sales analysis
-            </p>
-          </div>
+          <Card className="empty-state">
+            <p>Upload a CSV file to get started with your sales analysis</p>
+          </Card>
         )}
       </main>
 
-      {/* Upload Dialog */}
       <UploadDialog
         visible={showUploadDialog}
         onClose={() => setShowUploadDialog(false)}
@@ -130,7 +114,6 @@ export function App(): React.ReactElement {
         loading={uploading}
       />
 
-      {/* Error Notifications */}
       {uploadError && (
         <ErrorNotification error={uploadError} onDismiss={resetUpload} />
       )}

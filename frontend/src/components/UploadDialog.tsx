@@ -1,10 +1,7 @@
-/**
- * UploadDialog component for CSV file upload.
- */
-
 import React, { useRef, useState } from "react";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
+import { FileUpload, type FileUploadHandlerEvent } from "primereact/fileupload";
 import { Toast } from "primereact/toast";
 
 interface UploadDialogProps {
@@ -24,14 +21,33 @@ export function UploadDialog({
   onUploadError,
   loading,
 }: UploadDialogProps): React.ReactElement {
-  const toastRef = useRef(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const toastRef = useRef<Toast>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleFileSelect = (files: File[]) => {
+    const file = files[0];
     if (file) {
       setSelectedFile(file);
+    }
+  };
+
+  const handleCustomUpload = async (event: FileUploadHandlerEvent) => {
+    const [file] = event.files;
+    if (!file) {
+      onUploadError("Please select a CSV file");
+      return;
+    }
+
+    setSelectedFile(file);
+
+    try {
+      const recordsCount = await onUpload(file);
+      onUploadSuccess(recordsCount);
+      setSelectedFile(null);
+      event.options.clear();
+      onClose();
+    } catch (error) {
+      onUploadError(error instanceof Error ? error.message : "Upload failed");
     }
   };
 
@@ -45,9 +61,6 @@ export function UploadDialog({
       const recordsCount = await onUpload(selectedFile);
       onUploadSuccess(recordsCount);
       setSelectedFile(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
       onClose();
     } catch (error) {
       onUploadError(error instanceof Error ? error.message : "Upload failed");
@@ -60,44 +73,43 @@ export function UploadDialog({
       <Dialog
         header="Upload Sales CSV"
         visible={visible}
-        style={{ width: "50vw" }}
+        className="upload-dialog"
         onHide={onClose}
         modal
       >
-        <div className="space-y-4">
-          <div>
-            <label
-              htmlFor="sales-csv-file"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Select CSV File
-            </label>
-            <input
-              id="sales-csv-file"
-              ref={fileInputRef}
-              type="file"
-              accept=".csv"
-              onChange={handleFileSelect}
-              className="block w-full text-sm text-gray-500
-                file:mr-4 file:py-2 file:px-4
-                file:rounded file:border-0
-                file:text-sm file:font-semibold
-                file:bg-blue-50 file:text-blue-700
-                hover:file:bg-blue-100"
-            />
+        <div className="dialog-content">
+          <FileUpload
+            name="sales-csv-file"
+            accept=".csv,text/csv"
+            maxFileSize={5_000_000}
+            customUpload
+            uploadHandler={handleCustomUpload}
+            onSelect={(event) => handleFileSelect(event.files)}
+            onClear={() => setSelectedFile(null)}
+            onRemove={() => setSelectedFile(null)}
+            chooseLabel="Choose CSV"
+            uploadLabel="Upload"
+            cancelLabel="Clear"
+            disabled={loading}
+            pt={{
+              input: {
+                "aria-label": "Select CSV File",
+              },
+            }}
+            emptyTemplate={
+              <p className="upload-empty">Drag and drop a CSV file here.</p>
+            }
+          />
             {selectedFile && (
-              <p className="mt-2 text-sm text-green-600">
-                Selected: {selectedFile.name}
-              </p>
+              <p className="success-text">Selected: {selectedFile.name}</p>
             )}
-          </div>
 
-          <div className="flex gap-2 justify-end">
+          <div className="actions">
             <Button
               label="Cancel"
               icon="pi pi-times"
               onClick={onClose}
-              className="p-button-secondary"
+              severity="secondary"
               disabled={loading}
             />
             <Button

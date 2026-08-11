@@ -20,7 +20,7 @@ describe("FilterPanel", () => {
       />,
     );
 
-    expect(screen.getByRole("heading", { name: "Filters" })).toBeTruthy();
+    expect(screen.getByText("Filters")).toBeTruthy();
     expect(screen.getByLabelText(/Start Date/i)).toBeTruthy();
     expect(screen.getByLabelText(/End Date/i)).toBeTruthy();
     expect(screen.getAllByLabelText(/Category/i).length).toBeGreaterThan(0);
@@ -40,7 +40,8 @@ describe("FilterPanel", () => {
     ) as HTMLInputElement;
     const applyButton = screen.getByRole("button", { name: "Apply Filters" });
 
-    fireEvent.change(startDateInput, { target: { value: "2024-01-10" } });
+    fireEvent.input(startDateInput, { target: { value: "2024-01-10" } });
+    fireEvent.blur(startDateInput);
     fireEvent.click(applyButton);
 
     expect(mockOnApplyFilters).toHaveBeenCalledWith({
@@ -93,8 +94,10 @@ describe("FilterPanel", () => {
     const endDateInput = screen.getByLabelText(/End Date/i) as HTMLInputElement;
     const applyButton = screen.getByRole("button", { name: "Apply Filters" });
 
-    fireEvent.change(startDateInput, { target: { value: "2024-01-01" } });
-    fireEvent.change(endDateInput, { target: { value: "2024-01-31" } });
+    fireEvent.input(startDateInput, { target: { value: "2024-01-01" } });
+    fireEvent.blur(startDateInput);
+    fireEvent.input(endDateInput, { target: { value: "2024-01-31" } });
+    fireEvent.blur(endDateInput);
     fireEvent.click(applyButton);
 
     expect(mockOnApplyFilters).toHaveBeenCalledWith({

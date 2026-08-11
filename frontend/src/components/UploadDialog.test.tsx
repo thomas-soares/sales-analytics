@@ -97,7 +97,7 @@ describe("UploadDialog", () => {
     const file = new File(["date,product"], "sales.csv", { type: "text/csv" });
     const input = screen.getByLabelText(/Select CSV File/i);
     fireEvent.change(input, { target: { files: [file] } });
-    fireEvent.click(screen.getByRole("button", { name: "Upload" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Upload" }));
 
     await waitFor(() => {
       expect(mockOnUpload).toHaveBeenCalledWith(file);
