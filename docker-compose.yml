@@ -24,5 +24,3 @@ services:
     environment:
       - CI=true
     command: sh -c "pnpm install --no-frozen-lockfile && pnpm dev"
-    environment:
-      - CI=true
