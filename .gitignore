@@ -3,7 +3,9 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .coverage
+backend/coverage.json
 htmlcov/
+.tmp-badges/
 .venv/
 venv/
 
