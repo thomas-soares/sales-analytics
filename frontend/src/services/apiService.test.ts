@@ -9,6 +9,7 @@ import { apiService } from "../services/apiService";
 
 // Mock global fetch
 global.fetch = vi.fn();
+const fetchMock = vi.mocked(global.fetch);
 
 describe("API Service", () => {
   beforeEach(() => {
@@ -19,10 +20,7 @@ describe("API Service", () => {
     it("should fetch and return health status", async () => {
       const mockResponse: HealthResponse = { status: "ok" };
 
-      (global.fetch as any).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockResponse,
-      });
+      fetchMock.mockResolvedValueOnce(Response.json(mockResponse));
 
       const result = await apiService.health();
 
@@ -39,10 +37,7 @@ describe("API Service", () => {
         records_count: 3,
       };
 
-      (global.fetch as any).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockResponse,
-      });
+      fetchMock.mockResolvedValueOnce(Response.json(mockResponse));
 
       const result = await apiService.uploadCsv(mockFile);
 
@@ -70,10 +65,7 @@ describe("API Service", () => {
         },
       };
 
-      (global.fetch as any).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockReport,
-      });
+      fetchMock.mockResolvedValueOnce(Response.json(mockReport));
 
       const result = await apiService.getReport({});
 
@@ -93,10 +85,7 @@ describe("API Service", () => {
         },
       };
 
-      (global.fetch as any).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockReport,
-      });
+      fetchMock.mockResolvedValueOnce(Response.json(mockReport));
 
       const result = await apiService.getReport({
         start_date: "2024-01-01",
@@ -121,10 +110,7 @@ describe("API Service", () => {
         },
       };
 
-      (global.fetch as any).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockReport,
-      });
+      fetchMock.mockResolvedValueOnce(Response.json(mockReport));
 
       const result = await apiService.getReport({ category: "Clothing" });
 
@@ -135,11 +121,12 @@ describe("API Service", () => {
     });
 
     it("should handle HTTP errors", async () => {
-      (global.fetch as any).mockResolvedValueOnce({
-        ok: false,
-        statusText: "Internal Server Error",
-        status: 500,
-      });
+      fetchMock.mockResolvedValueOnce(
+        new Response(null, {
+          status: 500,
+          statusText: "Internal Server Error",
+        }),
+      );
 
       await expect(apiService.getReport({})).rejects.toThrow("HTTP 500");
     });
@@ -147,11 +134,9 @@ describe("API Service", () => {
 
   describe("error handling", () => {
     it("should throw error on failed health check", async () => {
-      (global.fetch as any).mockResolvedValueOnce({
-        ok: false,
-        status: 500,
-        statusText: "Server Error",
-      });
+      fetchMock.mockResolvedValueOnce(
+        new Response(null, { status: 500, statusText: "Server Error" }),
+      );
 
       await expect(apiService.health()).rejects.toThrow("HTTP 500");
     });
@@ -159,11 +144,9 @@ describe("API Service", () => {
     it("should throw error on failed file upload", async () => {
       const mockFile = new File(["data"], "test.csv", { type: "text/csv" });
 
-      (global.fetch as any).mockResolvedValueOnce({
-        ok: false,
-        status: 400,
-        statusText: "Bad Request",
-      });
+      fetchMock.mockResolvedValueOnce(
+        new Response(null, { status: 400, statusText: "Bad Request" }),
+      );
 
       await expect(apiService.uploadCsv(mockFile)).rejects.toThrow("HTTP 400");
     });
