@@ -11,6 +11,11 @@
     "test:ui": "vitest --ui",
     "preview": "vite preview"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
   "dependencies": {
     "primeicons": "8.0.0",
     "primereact": "10.9.7",
