@@ -133,5 +133,39 @@ describe("API Service", () => {
         "http://localhost:8000/report?category=Clothing",
       );
     });
+
+    it("should handle HTTP errors", async () => {
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: false,
+        statusText: "Internal Server Error",
+        status: 500,
+      });
+
+      await expect(apiService.getReport({})).rejects.toThrow("HTTP 500");
+    });
+  });
+
+  describe("error handling", () => {
+    it("should throw error on failed health check", async () => {
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        statusText: "Server Error",
+      });
+
+      await expect(apiService.health()).rejects.toThrow("HTTP 500");
+    });
+
+    it("should throw error on failed file upload", async () => {
+      const mockFile = new File(["data"], "test.csv", { type: "text/csv" });
+
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        statusText: "Bad Request",
+      });
+
+      await expect(apiService.uploadCsv(mockFile)).rejects.toThrow("HTTP 400");
+    });
   });
 });
