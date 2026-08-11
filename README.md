@@ -37,7 +37,7 @@ Camiseta,Vestuario,1,49.90,2024-01-12
 Tenis,Calcados,1,199.90,2024-01-13
 ```
 
-The frontend validates these headers with the browser `FileReader` API and simple `split` parsing before uploading. The backend remains responsible for the authoritative CSV parsing, validation, and aggregation using Python's standard `csv` module.
+The frontend reads the selected file with the browser `FileReader` API and validates headers plus each data row with simple `split` parsing before uploading. The backend remains responsible for the authoritative CSV parsing, validation, and aggregation using Python's standard `csv` module.
 
 ## API
 
