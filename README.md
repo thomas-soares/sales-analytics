@@ -27,9 +27,19 @@ Full stack sales analytics platform built with a FastAPI backend and a React 18 
 - `frontend/src/services/apiService.ts`: centralized backend HTTP calls and API base URL.
 - `frontend/src/utils/`: formatting, report export, and localStorage persistence helpers.
 
+## Implementation Notes
+
+- Upload entry point: the user starts uploads from `frontend/src/App.tsx`, which opens `frontend/src/components/UploadDialog.tsx`.
+- Upload storage: uploaded CSV files are not persisted. The backend reads the multipart file in `backend/app.py`, writes a temporary `.csv` only while parsing, deletes that temporary file, and keeps the parsed records in memory for the current process.
+- Upload component: `UploadDialog` uses PrimeReact `Dialog`, `FileUpload`, `Button`, and `Toast`.
+- Report tables: `frontend/src/components/ReportTable.tsx` uses PrimeReact `DataTable`, `Column`, `Toolbar`, `Panel`, `Card`, and `Button`.
+- Filters: `frontend/src/components/FilterPanel.tsx` uses PrimeReact `Panel`, `Calendar`, `Dropdown`, and `Button`.
+- Alerts/notifications: `frontend/src/components/ErrorNotification.tsx` uses PrimeReact `Toast`.
+- HTTP boundary: frontend components call hooks from `frontend/src/hooks/useSalesApi.ts`; only `frontend/src/services/apiService.ts` knows the API base URL.
+
 ## CSV Format
 
-Upload a `.csv` file through the frontend `Upload CSV` area. The challenge statement shows a minimal CSV shape with product, quantity, and unit price fields. This implementation intentionally keeps an extended CSV contract so the required category totals and date/category filters can be computed from the uploaded data.
+Upload a `.csv` file through the frontend `Upload CSV` area. A minimal sales CSV can include only product, quantity, and unit price fields; this implementation intentionally keeps an extended CSV contract so category totals and date/category filters can be computed directly from the uploaded data.
 
 Required columns:
 
