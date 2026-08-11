@@ -116,7 +116,19 @@ pnpm exec vitest --run --coverage
 pnpm build
 ```
 
-Current frontend coverage validated in Docker: 95.27% statements and 95.27% lines across measured source modules.
+## Coverage
+
+Latest validated coverage:
+
+- Backend: 100% statements across `app.py`, `core.py`, `output.py`, and `parser.py`.
+- Frontend: 92.35% statements and 92.35% lines across measured source modules.
+
+Coverage reports are generated at:
+
+- Backend HTML report: `backend/htmlcov/index.html`
+- Frontend HTML report: `frontend/coverage/index.html`
+
+GitHub Actions also uploads both coverage folders as workflow artifacts after each CI run.
 
 ## Additional Features
 
