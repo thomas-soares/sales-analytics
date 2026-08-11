@@ -104,7 +104,15 @@ export function ReportTable({
         </DataTable>
       </Panel>
 
-      <Panel header="Categories" className="table-section table-section--categories">
+      <Panel
+        header={
+          <Toolbar
+            className="table-toolbar table-toolbar--plain"
+            start={<h3>Categories</h3>}
+          />
+        }
+        className="table-section table-section--categories"
+      >
         <DataTable
           value={report.category_totals}
           loading={loading}

@@ -188,12 +188,8 @@
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
 }
 
-.table-section--products .p-panel-header {
+.table-section .p-panel-header {
   padding: 0;
-}
-
-.table-section--categories .p-panel-header {
-  padding: 16px 20px;
 }
 
 .table-section .p-panel-content {
@@ -205,6 +201,10 @@
   border-radius: 8px 8px 0 0;
   padding: 16px 20px;
   width: 100%;
+}
+
+.table-toolbar--plain {
+  background: transparent;
 }
 
 .table-toolbar .p-toolbar-group-start,
@@ -264,7 +264,6 @@
     flex-direction: column;
   }
 
-  .table-section--categories .p-panel-header,
   .table-toolbar {
     padding: 14px 16px;
   }
