@@ -122,10 +122,7 @@ pnpm build
 
 ## Coverage
 
-Latest validated coverage:
-
-- Backend: 100% statements across `app.py`, `core.py`, `output.py`, and `parser.py`.
-- Frontend: 92.35% statements and 92.35% lines across measured source modules.
+The coverage badges at the top of this README are updated by GitHub Actions after the test suites run on `main`.
 
 Coverage reports are generated at:
 
