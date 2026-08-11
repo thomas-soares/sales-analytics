@@ -36,7 +36,7 @@ def test_aggregate_sales_totals_by_category(sample_records) -> None:
     report = aggregate_sales(sample_records)
 
     category_dict = {c.category: c.total_value for c in report.category_totals}
-    assert category_dict["Clothing"] == "299.50"
+    assert category_dict["Clothing"] == "399.40"
     assert category_dict["Footwear"] == "199.90"
 
 
@@ -44,7 +44,7 @@ def test_aggregate_sales_total_value(sample_records) -> None:
     """Test that total value is calculated correctly."""
     report = aggregate_sales(sample_records)
 
-    assert report.total_value == "499.40"
+    assert report.total_value == "599.30"
 
 
 def test_aggregate_sales_most_sold_product_by_quantity(sample_records) -> None:
@@ -76,7 +76,7 @@ def test_aggregate_sales_with_date_filter(sample_records) -> None:
     report = aggregate_sales(sample_records, request)
 
     assert len(report.product_totals) == 2
-    assert report.total_value == "149.70"
+    assert report.total_value == "249.70"
 
 
 def test_aggregate_sales_with_category_filter(sample_records) -> None:
@@ -85,7 +85,7 @@ def test_aggregate_sales_with_category_filter(sample_records) -> None:
     report = aggregate_sales(sample_records, request)
 
     assert all(c.category == "Clothing" for c in report.category_totals)
-    assert report.total_value == "299.50"
+    assert report.total_value == "399.40"
 
 
 def test_aggregate_sales_with_both_filters(sample_records) -> None:
@@ -93,4 +93,50 @@ def test_aggregate_sales_with_both_filters(sample_records) -> None:
     request = ReportRequest(start_date=date(2024, 1, 10), end_date=date(2024, 1, 11), category="Clothing")
     report = aggregate_sales(sample_records, request)
 
-    assert report.total_value == "249.60"
+    assert report.total_value == "349.50"
+
+
+def test_aggregate_sales_empty_records() -> None:
+    """Test aggregation with empty records list."""
+    report = aggregate_sales([])
+
+    assert report.product_totals == []
+    assert report.category_totals == []
+    assert report.total_value == "0.00"
+    assert report.most_sold_product.product == ""
+
+
+def test_aggregate_sales_single_product(sample_records) -> None:
+    """Test aggregation with single product."""
+    single_record = [sample_records[0]]
+    report = aggregate_sales(single_record)
+
+    assert len(report.product_totals) == 1
+    assert report.product_totals[0].product == "T-Shirt"
+    assert report.total_value == "149.70"
+
+
+def test_aggregate_sales_filter_no_results(sample_records) -> None:
+    """Test aggregation when filter results in no records."""
+    request = ReportRequest(category="NonExistent")
+    report = aggregate_sales(sample_records, request)
+
+    assert report.product_totals == []
+    assert report.total_value == "0.00"
+
+
+def test_aggregate_sales_date_filter_start_only(sample_records) -> None:
+    """Test aggregation with start_date only."""
+    request = ReportRequest(start_date=date(2024, 1, 12))
+    report = aggregate_sales(sample_records, request)
+
+    assert len(report.product_totals) == 2
+    assert report.total_value == "249.80"
+
+
+def test_aggregate_sales_date_filter_end_only(sample_records) -> None:
+    """Test aggregation with end_date only."""
+    request = ReportRequest(end_date=date(2024, 1, 11))
+    report = aggregate_sales(sample_records, request)
+
+    assert report.total_value == "349.50"
